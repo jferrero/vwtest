@@ -3,13 +3,8 @@
 class PingRequestHandler extends AbstractXMLHandler
 {
 
-  protected $xsdRequestFilepath = 'protected/data/xsd/';
   protected $xsdRequestFilename = 'ping_request.xsd';
-
-  protected $xsdResponseFilepath = 'protected/data/xsd/';
   protected $xsdResponseFilename = 'ping_response.xsd';
-
-  protected $xmlResponseSampleFilepath = 'protected/data/samples/';
   protected $xmlResponseSampleFilename = 'ping_response.xml';
 
   public function __construct($inputdata)
@@ -46,49 +41,7 @@ class PingRequestHandler extends AbstractXMLHandler
    */
   protected function handleResponse()
   {
-    $this->responseXMLObject = $this->createDOMFromFile($this->xmlResponseSampleFilepath, $this->xmlResponseSampleFilename, $this->xsdResponseFilepath, $this->xmlResponseSampleFilename);
-
-    $documentElement = $this->responseXMLObject->documentElement;
-    $requestDocumentElement = $this->requestXmlObject->documentElement;
-
-    if (($theTypeNode = $this->findFirstElementByTagName($documentElement, "type"))   == false) {
-      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-1");
-    }
-
-    if (($theSenderNode = $this->findFirstElementByTagName($documentElement, "sender"))   == false) {
-      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-2");
-    }
-
-    if (($theRecipientNode = $this->findFirstElementByTagName($documentElement, "recipient"))   == false) {
-      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-3");
-    }
-
-    if (($theReferenceNode = $this->findFirstElementByTagName($documentElement, "reference"))   == false) {
-      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-4");
-    }
-
-    if (($theTimestampNode = $this->findFirstElementByTagName($documentElement, "timestamp"))   == false) {
-      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-5");
-    }
-
-    if (($theOldSenderNode = $this->findFirstElementByTagName($requestDocumentElement, "sender"))   == false) {
-      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-6");
-    }
-
-    if (($theReferenceNode = $this->findFirstElementByTagName($requestDocumentElement, "reference"))   == false) {
-      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-7");
-    }
-    $nowDate = new DateTime("now");
-    $miliseconds = substr(microtime(),2,3);
-    //$miliseconds = substr($nowDate->format("u"), 0, 3); // this should worked, but it didn't
-
-    $theTypeNode->nodeValue = "ping_response";
-    $theSenderNode->nodeValue = "DEMO";
-    $theRecipientNode->nodeValue = $theOldSenderNode->nodeValue;
-    $theReferenceNode->nodeValue = $theOldSenderNode->reference;
-    $theTimestampNode->nodeValue = $nowDate->format("Y-m-d\TH:i:s." . $miliseconds . "P");
-
-    return $this->responseXMLObject;
+      return parent::handleHeader();
   }
 
 }

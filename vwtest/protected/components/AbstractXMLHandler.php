@@ -7,13 +7,13 @@ abstract class AbstractXMLHandler
   protected $requestXmlObject;
   protected $responseXMLObject;
 
-  protected $xsdRequestFilepath = '';
+  protected $xsdRequestFilepath = 'protected/data/xsd/';
   protected $xsdRequestFilename = '';
 
-  protected $xsdResponseFilepath = '';
+  protected $xsdResponseFilepath = 'protected/data/xsd/';
   protected $xsdResponseFilename = '';
 
-  protected $XmlResponseFilepath = '';
+  protected $xmlResponseSampleFilepath = 'protected/data/samples/';
   protected $XmlResponseFilename = '';
 
   public static function HandleRequest($inputParams)
@@ -30,7 +30,8 @@ abstract class AbstractXMLHandler
       $validation = 1;
       if ($this->xsdRequestFilepath && $this->xsdRequestFilename) {
         // ToDo validation of directory
-        //print_r("<pre>" .htmlentities($aDomDocument->saveXML()) . "</pre>");
+        //print_r("<pre>" .htmlentities($aDomDocument->saveXML()) . "</pre>");die;
+        //print_r("<pre>" .$this->xsdRequestFilepath . $this->xsdRequestFilename. "</pre>");die;
         $validation = $aDomDocument->schemaValidate ($this->xsdRequestFilepath . $this->xsdRequestFilename);
 
       } else {
@@ -43,6 +44,53 @@ abstract class AbstractXMLHandler
       } else {
         return array("Error", 400, "Bad Request, not recognizable xml format");
       }
+  }
+
+  protected function handleHeader()
+  {
+    $this->responseXMLObject = $this->createDOMFromFile($this->xmlResponseSampleFilepath, $this->xmlResponseSampleFilename, $this->xsdResponseFilepath, $this->xmlResponseSampleFilename);
+
+    $documentElement = $this->responseXMLObject->documentElement;
+    $requestDocumentElement = $this->requestXmlObject->documentElement;
+
+    if (($theTypeNode = $this->findFirstElementByTagName($documentElement, "type"))   == false) {
+      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-1");
+    }
+
+    if (($theSenderNode = $this->findFirstElementByTagName($documentElement, "sender"))   == false) {
+      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-2");
+    }
+
+    if (($theRecipientNode = $this->findFirstElementByTagName($documentElement, "recipient"))   == false) {
+      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-3");
+    }
+
+    if (($theReferenceNode = $this->findFirstElementByTagName($documentElement, "reference"))   == false) {
+      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-4");
+    }
+
+    if (($theTimestampNode = $this->findFirstElementByTagName($documentElement, "timestamp"))   == false) {
+      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-5");
+    }
+
+    if (($theOldSenderNode = $this->findFirstElementByTagName($requestDocumentElement, "sender"))   == false) {
+      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-6");
+    }
+
+    if (($theReferenceNode = $this->findFirstElementByTagName($requestDocumentElement, "reference"))   == false) {
+      return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-7");
+    }
+    $nowDate = new DateTime("now");
+    $miliseconds = substr(microtime(),2,3);
+    //$miliseconds = substr($nowDate->format("u"), 0, 3); // this should worked, but it didn't
+
+    $theTypeNode->nodeValue = "ping_response";
+    $theSenderNode->nodeValue = "DEMO";
+    $theRecipientNode->nodeValue = $theOldSenderNode->nodeValue;
+    $theReferenceNode->nodeValue = $theOldSenderNode->reference;
+    $theTimestampNode->nodeValue = $nowDate->format("Y-m-d\TH:i:s." . $miliseconds . "P");
+
+    return $this->responseXMLObject;
   }
 
   // been done public in order to be able to use set_error_handler, otherwise will be protected
@@ -97,7 +145,6 @@ abstract class AbstractXMLHandler
     //print_r($nodes);die;
     $resultNode = $nodes->item(0);
 
-
      //print_r($resultNode);die;
     //   print_r($resultNode->hasAttribute("tagName"));die;
       //print_r($resultNode->getAttributeNode('type'));die;
@@ -106,7 +153,6 @@ abstract class AbstractXMLHandler
     } else {
       return false;
     }
-
   }
 
 }

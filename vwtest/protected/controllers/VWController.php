@@ -31,6 +31,25 @@ class VWController extends Controller
 
   }
 
+  public function actionReverse()
+  {
+    try {
+
+      $result = ReverseRequestHandler::HandleRequest(trim((file_get_contents('php://input'))));
+
+      if (is_array($result) && sizeof($result) == 3) {
+
+        $this->sendResponse($result);
+      } else {
+        echo "<pre>" . htmlentities($result->saveXML()) . "</pre>";
+      }
+    } catch (VWException $e) {
+      $this->sendResponse(CJSON::decode($e->getMessage()));
+    } catch (Exception $e) {
+      $this->sendResponse(array(501, "Unknown server error"));
+    }
+  }
+
   /**
     * Sends a default response in case of Client Errors or unexpected server errors
     * @param  array  $response An array containing these parameters
