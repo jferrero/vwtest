@@ -1,77 +1,88 @@
 <?php
 
+/**
+ * Main and only Controller used by the API, entirely coded for the Test (a-k-a not code used besides de MVC)
+ */
 class VWController extends Controller
 {
+
   /**
-   * This is the default 'index' action that is invoked
-   * when an action is not explicitly requested by users.
+   * Action made for the API ping method, Expects a POST XML
+   * @return [type] [description]
    */
-  public function actionIndex()
-  {
-
-  }
-
   public function actionPing()
   {
     try {
 
-      $result = PingRequestHandler::HandleRequest(trim((file_get_contents('php://input'))));
+      $result = PingRequestHandler::HandleRequest(trim((file_get_contents('php://input'))));  // read POST raw data
 
-      if (is_array($result) && sizeof($result) == 3) {
+      if (is_array($result) && sizeof($result) == 3) {  // just check for an expected array of error
 
-        $this->sendResponse($result);
+        $this->sendResponse($result); // return error, with info provided from within the app core
       } else {
-        echo "<pre>" . htmlentities($result->saveXML()) . "</pre>";
+        echo "<pre>" . htmlentities($result->saveXML()) . "</pre>"; // print XML to the response, along with a 200.
       }
     } catch (VWException $e) {
-      $this->sendResponse(CJSON::decode($e->getMessage()));
+      $this->sendResponse(CJSON::decode($e->getMessage()));   // catch the exception, print the result xml
     } catch (Exception $e) {
-      $this->sendResponse(array(501, "Unknown server error"));
+      $this->sendResponse(array(501, $e->getMessage())); // catch the exception, print the result xml
     }
 
   }
 
+  /**
+   * Action made for the API reverse method, Expects a POST XML
+   * @return [type] [description]
+   */
   public function actionReverse()
   {
     try {
 
-      $result = ReverseRequestHandler::HandleRequest(trim((file_get_contents('php://input'))));
+      $result = ReverseRequestHandler::HandleRequest(trim((file_get_contents('php://input')))); // read POST raw data
 
-      if (is_array($result) && sizeof($result) == 3) {
+      if (is_array($result) && sizeof($result) == 3) { // just check for an expected array of error
 
-        $this->sendResponse($result);
+        $this->sendResponse($result); // return error, with info provided from within the app core
       } else {
-        echo "<pre>" . htmlentities($result->saveXML()) . "</pre>";
+        echo "<pre>" . htmlentities($result->saveXML()) . "</pre>"; // print XML to the response, along with a 200.
       }
     } catch (VWException $e) {
-      $this->sendResponse(CJSON::decode($e->getMessage()));
+      $this->sendResponse(CJSON::decode($e->getMessage())); // catch the exception, print the result xml
     } catch (Exception $e) {
-      $this->sendResponse(array(501, "Unknown server error"));
+      $this->sendResponse(array(501, "Unknown server error")); // catch the exception, print the result xml
     }
   }
 
   /**
-    * Sends a default response in case of Client Errors or unexpected server errors
+    * Sends a default response in case of client Errors or unexpected server errors
+    * VERY BASIC (FOR THE SAKE OF TIME) error-output system
     * @param  array  $response An array containing these parameters
-      * embeded-param integer $code     The Http code to be returned, default to 500
-      * embeded-param string $response Http desc to be shown along the http status, default to "Internal Server Errors"
+    * * embeded-param integer type     The Http code to be returned, default to Error
+      * embeded-param integer code     The Http code to be returned, default to 500
+      * embeded-param string response Http desc to be shown along the http status, default to "Internal Server Error"
     * @return [type]            Return the given array
   */
   private function sendResponse(array $response)
   {
-    header('Content-type: application/xml; charset=utf-8');
+    header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
 
-    $aDomDocument = new DOMDocument('1.0', "UTF-8");
+    $response[0] = ($response[0]) ? $response[0] : "Error";     // force the defualt values for the 3 params
+    $response[1] = ($response[1]) ? $response[1] : 500;
+    $response[2] = ($response[2]) ? $response[2] : "Internal Server Error";
+
+    http_response_code($response[1]);                           // set the appropiate http_status
+
+    $aDomDocument = new DOMDocument('1.0', "UTF-8");            // hydrate the response
 
     // append the root node
     $rootNode = $aDomDocument->createElement("VWTestDefaultResponse");
     $rootNode = $aDomDocument->appendChild($rootNode);
 
-    // append the HTTP code
+    // append the "STATUS", just as "Error"
     $statusNode = $aDomDocument->createElement("Status", $response[0]);
     $insertedNode = $rootNode->appendChild($statusNode);
 
-    // append the HTTP code
+    // append the HTTP status, such as 401
     $HTTPStatusNode = $aDomDocument->createElement("HTTPStatusCode", $response[1]);
     $insertedNode = $rootNode->appendChild($HTTPStatusNode);
 
@@ -79,7 +90,6 @@ class VWController extends Controller
     $descNode = $aDomDocument->createElement("Response", $response[2]);
     $insertedNode = $rootNode->appendChild($descNode);
 
-    //die(CJSON::encode(array("result" => $response)));
     echo $aDomDocument->saveXML();
     die();
   }

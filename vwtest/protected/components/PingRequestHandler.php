@@ -1,22 +1,18 @@
 <?php
 
+/**
+ * Specific class for handling the ping requests
+ */
 class PingRequestHandler extends AbstractXMLHandler
 {
 
-  protected $xsdRequestFilename = 'ping_request.xsd';
-  protected $xsdResponseFilename = 'ping_response.xsd';
-  protected $xmlResponseSampleFilename = 'ping_response.xml';
-
-  public function __construct($inputdata)
-  {
-    $this->inputdata = $inputdata;
-
-    return $this;
-  }
+  protected $xsdRequestFilename = 'ping_request.xsd';         // filename of the proper request XSD
+  protected $xsdResponseFilename = 'ping_response.xsd';       // filename of the proper response XSD
+  protected $xmlResponseSampleFilename = 'ping_response.xml'; // filename of the example xml response
 
   /**
-   * Class Interface, creates a Object off this class and start the all method chain, returns an array-error or the XML to be returned if all it's sucessfull
-   * @param [type] $input The text to be handled by the app core
+   * Class entry point, creates a Object of this class and start all method's chain, returns the XML to be returned if all it's sucessfull
+   * @param [type] $input The text to be handled by the app core, the post raw data
    */
   public static function HandleRequest($input)
   {
@@ -24,12 +20,12 @@ class PingRequestHandler extends AbstractXMLHandler
     $aPingRequestHandler = new PingRequestHandler($input);                // create a PingRequest Object
     if (is_array($result = $aPingRequestHandler->validateVsXsd())) {      // check if it's an XML an validate against an xml
 
-      return $result;                                                     // if it's an error, return it to the controller or to whoever it's calling
+      throw new VWException(CJSON::encode($result));
     } elseif (!($result instanceof DOMDocument)) {
-      return array("Error", "500", "Unknown Server Error, XML could not be parsed");  // not suppose to happen, JIC anwser
+      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, XML could not be parsed")));
     } else {
 
-      // everything good to go
+      // check-up and good to go
       return $aPingRequestHandler->handleResponse();                      // handle and return the reponse
     }
 
@@ -37,11 +33,22 @@ class PingRequestHandler extends AbstractXMLHandler
 
   /**
    * Once ensured it's the proper XML, a reponse should be sended
-   * @return [type] [description]
+   * @return [type] the response object
    */
   protected function handleResponse()
   {
-      return parent::handleHeader();
-  }
+    parent::handleResponse();   // made the standard changes to the response document
 
+    if (($theBodyNode = $this->findFirstElementByTagName($this->responseXMLObject->documentElement, "body")) == false) {
+      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-P1")));
+    }
+
+    if (($theOldBody = $this->findFirstElementByTagName($this->requestXmlObject->documentElement, "body")) == false) {
+      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-P2")));
+    }
+
+    $theBodyNode->nodeValue = $theOldBody->nodeValue;   // copu the value (optional at the TEST PDF)
+
+    return $this->responseXMLObject;
+  }
 }
