@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reverse_response>
+  <header>
+    <type>reverse_response</type>
+    <sender>DEMO</sender>
+    <recipient>VOICEWORKS</recipient>
+    <reference>reverse_request_12345</reference>
+    <timestamp>2013-12-19T16:45:11.050+01:00</timestamp>
+  </header>
+  <body>
+    <string>Hello!</string>
+    <reverse>!olleH</reverse>
+  </body>
+</reverse_response>

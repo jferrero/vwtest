@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ping_request>
+  <header>
+    <type>ping_request</type>
+    <sender>VOICEWORKS</sender>
+    <recipient>DEMO</recipient>
+    <reference>ping_request_12345</reference>
+    <timestamp>2013-12-19T16:45:10.950+01:00</timestamp>
+  </header>
+  <body>
+    <echo>Hello!</echo>
+  </body>
+</ping_request>

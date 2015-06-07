@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nack>
+  <header>
+    <type>nack</type>
+    <sender>VOICEWORKS</sender>
+    <recipient>DEMO</recipient>
+    <reference>ping_request_12345</reference>
+    <timestamp>2013-12-19T16:45:10.950+01:00</timestamp>
+  </header>
+  <body>
+    <error>
+      <code>404</code>
+      <message>The requested message is not recognized.</message>
+    </error>
+  </body>
+</nack>
