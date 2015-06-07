@@ -78,9 +78,9 @@ class PingRequestHandler extends AbstractXMLHandler
     if (($theReferenceNode = $this->findFirstElementByTagName($requestDocumentElement, "reference"))   == false) {
       return array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-7");
     }
-
     $nowDate = new DateTime("now");
-    $miliseconds = substr($nowDate->format("u"), 0, 3);
+    $miliseconds = substr(microtime(),2,3);
+    //$miliseconds = substr($nowDate->format("u"), 0, 3); // this should worked, but it didn't
 
     $theTypeNode->nodeValue = "ping_response";
     $theSenderNode->nodeValue = "DEMO";

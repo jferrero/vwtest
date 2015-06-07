@@ -20,19 +20,11 @@ abstract class AbstractXMLHandler
   {
   }
 
-  protected function inputCheckNParsing()
-  {
-  }
-
-  protected function handleXmlWrongFormat()
-  {
-  }
-
   protected function validateVsXsd()
   {
       // ----- this is where the XML is validated first as a xml and then against it's own xsd
-      set_error_handler(array(self, 'CustomHandleErrors'));  // set a specific error handler for the loadXML function, to have control of the error
-      $this->requestXmlObject =$aDomDocument = new DOMDocument;
+      set_error_handler(array($this, 'CustomHandleErrors'));  // set a specific error handler for the loadXML function, to have control of the error
+      $this->requestXmlObject = $aDomDocument = new DOMDocument;
       $aDomDocument->loadXML($this->inputdata, LIBXML_PARSEHUGE);    // load the xml, allowing big XMLs as well
 
       $validation = 1;
@@ -53,27 +45,27 @@ abstract class AbstractXMLHandler
       }
   }
 
-  protected function CustomHandleErrors($errno, $errstr, $errfile, $errline)
+  // been done public in order to be able to use set_error_handler, otherwise will be protected
+  public function CustomHandleErrors($errno, $errstr, $errfile, $errline)
   {
+
     //echo $errstr . "--" . $errfile;die;
     if ($errno==E_WARNING && (substr_count($errstr,"DOMDocument::loadXML()")>0)) {
-        $this->sendResponse(400, "Bad Request, not a valid or recognizable xml format");
+        throw new VWException(CJSON::encode(array("Error", 400, "Bad Request, not a valid or recognizable xml format",1)));
     } else {
       if ($errno==E_WARNING && (substr_count($errstr,"DOMDocument::schemaValidate(): Element")>0)) {
-        $this->sendResponse(400, "Bad Request, this xml is not supported, please check the proper xsd format, request rejected");
+        throw new VWException(CJSON::encode(array("Error", 400, "Bad Request, the xml is not supported, please check the proper xsd format, request rejected",1)));
       } else {
-        if ($errno==E_WARNING) {
-          $this->sendResponse(400, $errstr . "--" . $errline);
+        // EXCLUDED FROM THE TEST
+        // Here some kind of Production/pre-production/development/local flag hsould be posted in order to print or no certain error, warnings and notices
+        // normaly will not br printed out on PRO and be done better
+        if ($errno==E_ERROR) {
+          trigger_error ($errstr . "-- " . $errfile . " -- " . $errline . " , [$errno = E_USER_ERROR ] ");
         } else {
-
-          $this->sendResponse(400, $errstr . "--" . $errline);
+          trigger_error ($errstr . "-- " . $errfile . " -- " . $errline . " , [$errno = E_USER_ERROR ] ");  // NOTICES SHOULD BE ALSO TREATED IF NOT treated on php.ini or config at the FWK
         }
       }
     }
-  }
-
-  protected function processRequest()
-  {
   }
 
   /**
