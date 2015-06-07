@@ -12,6 +12,10 @@ class VWController extends Controller
    */
   public function actionPing()
   {
+    // this could be done with the FWK, but done here for the purpose of this test
+    if ($_SERVER['REQUEST_METHOD'] != "POST") {
+      $this->sendResponse(array("Method Not Allowed", 405, "Method Not Allowed"));
+    }
     try {
 
       $result = PingRequestHandler::HandleRequest(trim((file_get_contents('php://input'))));  // read POST raw data
@@ -36,6 +40,10 @@ class VWController extends Controller
    */
   public function actionReverse()
   {
+    // this could be done with the FWK, but done here for the purpose of this test
+    if ($_SERVER['REQUEST_METHOD'] != "POST") {
+      $this->sendResponse(array("Method Not Allowed", 405, "Method Not Allowed"));
+    }
     try {
 
       $result = ReverseRequestHandler::HandleRequest(trim((file_get_contents('php://input')))); // read POST raw data
@@ -64,6 +72,7 @@ class VWController extends Controller
   */
   private function sendResponse(array $response)
   {
+
     header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
 
     $response[0] = ($response[0]) ? $response[0] : "Error";     // force the defualt values for the 3 params
@@ -94,4 +103,25 @@ class VWController extends Controller
     die();
   }
 
+}
+
+register_shutdown_function( "fatal_handler" );
+
+function fatal_handler()
+{
+  $errfile = "unknown file";
+  $errstr  = "shutdown";
+  $errno   = E_CORE_ERROR;
+  $errline = 0;
+
+  $error = error_get_last();
+
+  if ($error !== NULL) {
+    $errno   = $error["type"];
+    $errfile = $error["file"];
+    $errline = $error["line"];
+    $errstr  = $error["message"];
+
+    //error_mail(format_error( $errno, $errstr, $errfile, $errline));
+  }
 }

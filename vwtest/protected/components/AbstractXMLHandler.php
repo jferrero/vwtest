@@ -33,7 +33,7 @@ abstract class AbstractXMLHandler
 
   /**
    * This function load the XML and if possible compare it to the proper XSD file
-   * @return either a 3 element error-array or the succesfully loaded and XSD-checked XML.
+   * @return the succesfully loaded and XSD-checked XML.
    */
   protected function validateVsXsd()
   {
@@ -47,18 +47,18 @@ abstract class AbstractXMLHandler
         if (file_exists($this->xsdRequestFilepath . $this->xsdRequestFilename)) {
           $validation = $aDomDocument->schemaValidate ($this->xsdRequestFilepath . $this->xsdRequestFilename);
         } else {
-          return array("Error", "500", "Internal Xsd Data not available, Contact Admin");
+          NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Internal Xsd Data not available, Contact Admin");
         }
 
       } else {
-        return array("Error", "500", "Internal Xsd Data not properly defined, Contact Admin");
+        NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Internal Xsd Data not properly defined, Contact Admin");
       }
       restore_error_handler();  // return error handler to default
 
       if ($validation) {
         return $aDomDocument;
       } else {
-        return array("Error", 400, "Bad Request, not recognizable xml format");
+        NackResponseHandler::HandleRequest($this->requestXmlObject, 400, "Bad Request, not recognizable xml format");
       }
   }
 
@@ -78,49 +78,62 @@ abstract class AbstractXMLHandler
   protected function handleHeader()
   {
     // load the reponseXML object from the examples
-    $this->responseXMLObject = $this->createDOMFromFile($this->xmlResponseSampleFilepath, $this->xmlResponseSampleFilename, $this->xsdResponseFilepath, $this->xmlResponseSampleFilename);
+    $this->responseXMLObject = $this->createDOMFromFile($this->xmlResponseSampleFilepath, $this->xmlResponseSampleFilename);
 
     $documentElement = $this->responseXMLObject->documentElement;
     $requestDocumentElement = $this->requestXmlObject->documentElement;
 
-    // access the diferent elements of the Response-XML header, to changed later
+    // access the diferent elements of the Response-XML header, to be changed later
     if (($theTypeNode = $this->findFirstElementByTagName($documentElement, "type"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-1")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-6");
     }
 
     if (($theSenderNode = $this->findFirstElementByTagName($documentElement, "sender"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-2")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-2");
     }
 
     if (($theRecipientNode = $this->findFirstElementByTagName($documentElement, "recipient"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-3")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-3");
     }
 
     if (($theReferenceNode = $this->findFirstElementByTagName($documentElement, "reference"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-4")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-4");
     }
 
     if (($theTimestampNode = $this->findFirstElementByTagName($documentElement, "timestamp"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-5")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-5");
     }
 
-    // access the diferent elements of the Request-XML header, to be used in the response Header
-    if (($theOldSenderNode = $this->findFirstElementByTagName($requestDocumentElement, "sender"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-6")));
+
+    if ($this instanceof NackResponseHandler) {
+      //print_r($this->requestXmlObject);die;
     }
 
-    if (($theReferenceNode = $this->findFirstElementByTagName($requestDocumentElement, "reference"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-7")));
+    if ($requestDocumentElement) {
+      // access the diferent elements of the Request-XML header, to be used in the response Header
+      if (($theOldSenderNode = $this->findFirstElementByTagName($this->requestXmlObject, "sender"))   == false) {
+        NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-6");
+      }
+
+      if (($theOldReferenceNode = $this->findFirstElementByTagName($this->requestXmlObject, "reference"))   == false) {
+        NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-7");
+      }
+
+      $theOldSenderNodeValue = $theOldSenderNode->nodeValue;
+      $theOldReferenceNodeValue = $theOldReferenceNode->nodeValue;
+    } else {
+      $theOldSenderNodeValue = "Unknown";
+      $theOldReferenceNodeValue = "Unknown";
     }
 
     $nowDate = new DateTime("now");
     $miliseconds = substr(microtime(),2,3);
     //$miliseconds = substr($nowDate->format("u"), 0, 3); // this should worked, but it didn't
 
-    $theTypeNode->nodeValue = "ping_response";
+    //$theTypeNode->nodeValue = "ping_response";
     $theSenderNode->nodeValue = "DEMO";
-    $theRecipientNode->nodeValue = $theOldSenderNode->nodeValue;
-    $theReferenceNode->nodeValue = $theOldSenderNode->reference;
+    $theRecipientNode->nodeValue = $theOldSenderNodeValue;
+    $theReferenceNode->nodeValue = $theOldReferenceNodeValue;
     $theTimestampNode->nodeValue = $nowDate->format("Y-m-d\TH:i:s." . $miliseconds . "P");
 
     return $this->responseXMLObject;
@@ -141,18 +154,18 @@ abstract class AbstractXMLHandler
 
     //echo $errstr . "--" . $errfile;die;
     if ($errno==E_WARNING && (substr_count($errstr,"DOMDocument::loadXML()")>0)) {
-        throw new VWException(CJSON::encode(array("Error", 400, "Bad Request, not a valid or recognizable xml format",1)));
+        NackResponseHandler::HandleRequest($this->requestXmlObject, 400, "Bad Request, not a valid or recognizable xml format");
     } else {
       if ($errno==E_WARNING && (substr_count($errstr,"DOMDocument::schemaValidate(): Element")>0)) {
-        throw new VWException(CJSON::encode(array("Error", 400, "Bad Request, the xml is not supported, please check the proper xsd format, request rejected",1)));
+        NackResponseHandler::HandleRequest($this->requestXmlObject, 400, "Bad Request, the xml is not supported, please check the proper xsd format, request rejected");
       } else {
         // EXCLUDED FROM THE TEST
         // Here some kind of Production/pre-production/development/local flag hsould be posted in order to print or no certain error, warnings and notices
         // normaly will not be printed out on PRO and be done better
         if ($errno==E_ERROR) {
-          trigger_error ($errstr . "-- " . $errfile . " -- " . $errline . " , [$errno = E_USER_ERROR ] ");
+          trigger_error ($errstr . "-- " . $errfile . " -- " . $errline , E_USER_ERROR);
         } else {
-          trigger_error ($errstr . "-- " . $errfile . " -- " . $errline . " , [$errno = E_USER_ERROR ] ");  // NOTICES SHOULD BE ALSO TREATED IF NOT treated on php.ini or config at the FWK
+          trigger_error ($errstr . "-- " . $errfile . " -- " . $errline , E_USER_ERROR);  // NOTICES SHOULD BE ALSO TREATED IF NOT treated on php.ini or config at the FWK
         }
       }
     }
@@ -162,11 +175,9 @@ abstract class AbstractXMLHandler
    * Simple function to create a DomDocument from a XML example file
    * @param  [type] $examplePath     [description]
    * @param  [type] $examplefileName [description]
-   * @param  [type] $xsdPath         [description]
-   * @param  [type] $xsdFileName     [description]
    * @return [type]                  [description]
    */
-  protected function createDOMFromFile($examplePath, $examplefileName, $xsdPath, $xsdFileName)
+  protected function createDOMFromFile($examplePath, $examplefileName)
   {
     if (file_exists($examplePath . $examplefileName)) {
       $aResponseXMLObject = new DOMDocument;
@@ -174,7 +185,7 @@ abstract class AbstractXMLHandler
 
       return $aResponseXMLObject;
     } else {
-      throw new VWException(CJSON::encode(array("Error", 500, "Oops, There is a internal error, cannot make an appropiate response")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Oops, Reponse XML Not found, cannot make an appropiate response");
     }
   }
 

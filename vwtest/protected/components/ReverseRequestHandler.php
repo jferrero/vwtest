@@ -40,11 +40,11 @@ class ReverseRequestHandler extends AbstractXMLHandler
     parent::handleResponse();   // made the standard changes to the response document
 
     if (($theBodyNode = $this->findFirstElementByTagName($this->responseXMLObject->documentElement, "body"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-R1")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Unknown Server Error, Errors while parsing the XML response object-R1");
     }
 
     if (($theOldBody = $this->findFirstElementByTagName($this->requestXmlObject->documentElement, "body"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-R2")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Unknown Server Error, Errors while parsing the XML response object-R2");
     }
 
     $theBodyNode->nodeValue = strrev($theOldBody->nodeValue); // THE reverse string line

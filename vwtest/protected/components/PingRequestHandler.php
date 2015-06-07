@@ -18,13 +18,9 @@ class PingRequestHandler extends AbstractXMLHandler
   {
 
     $aPingRequestHandler = new PingRequestHandler($input);                // create a PingRequest Object
-    if (is_array($result = $aPingRequestHandler->validateVsXsd())) {      // check if it's an XML an validate against an xml
-
-      throw new VWException(CJSON::encode($result));
-    } elseif (!($result instanceof DOMDocument)) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, XML could not be parsed")));
+    if (!($result instanceof DOMDocument)) {
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Unknown Server Error, Request could not be understood");
     } else {
-
       // check-up and good to go
       return $aPingRequestHandler->handleResponse();                      // handle and return the reponse
     }
@@ -40,11 +36,11 @@ class PingRequestHandler extends AbstractXMLHandler
     parent::handleResponse();   // made the standard changes to the response document
 
     if (($theBodyNode = $this->findFirstElementByTagName($this->responseXMLObject->documentElement, "body")) == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-P1")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Unknown Server Error, Errors while parsing the XML response object-P1");
     }
 
     if (($theOldBody = $this->findFirstElementByTagName($this->requestXmlObject->documentElement, "body")) == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-P2")));
+      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Unknown Server Error, Errors while parsing the XML response object-P2");
     }
 
     $theBodyNode->nodeValue = $theOldBody->nodeValue;   // copu the value (optional at the TEST PDF)
