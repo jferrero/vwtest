@@ -4,7 +4,8 @@ abstract class AbstractXMLHandler
 {
 
   protected $inputdata;
-  protected $xmlObject;
+  protected $requestXmlObject;
+  protected $responseXMLObject;
 
   protected $xsdRequestFilepath = '';
   protected $xsdRequestFilename = '';
@@ -31,7 +32,7 @@ abstract class AbstractXMLHandler
   {
       // ----- this is where the XML is validated first as a xml and then against it's own xsd
       set_error_handler(array(self, 'CustomHandleErrors'));  // set a specific error handler for the loadXML function, to have control of the error
-      $aDomDocument = new DOMDocument;
+      $this->requestXmlObject =$aDomDocument = new DOMDocument;
       $aDomDocument->loadXML($this->inputdata, LIBXML_PARSEHUGE);    // load the xml, allowing big XMLs as well
 
       $validation = 1;
