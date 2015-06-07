@@ -3,33 +3,26 @@
 class VWController extends Controller
 {
   /**
-   * Declares class-based actions.
-   */
-  public function actions()
-  {
-  }
-
-  /**
    * This is the default 'index' action that is invoked
    * when an action is not explicitly requested by users.
    */
   public function actionIndex()
   {
-    echo "index";
+
   }
 
-  /**
-   * This is the action to handle external exceptions.
-   */
-  public function actionError()
-  {
-    if ($error=Yii::app()->errorHandler->error) {
-      if(Yii::app()->request->isAjaxRequest)
-        echo $error['message'];
-      else
-        $this->render('error', $error);
-    }
-  }
+  // /**
+  //  * This is the action to handle external exceptions.
+  //  */
+  // public function actionError()
+  // {
+  //   if ($error=Yii::app()->errorHandler->error) {
+  //     if(Yii::app()->request->isAjaxRequest)
+  //       echo $error['message'];
+  //     else
+  //       $this->render('error', $error);
+  //   }
+  // }
 
   public function actionTest()
   {
@@ -45,9 +38,24 @@ class VWController extends Controller
 
   public function actionPing()
   {
-    $aPingDocument = $this->inputCheckNParsing();  // check data
+    // old request
+    //$aPingDocument = $this->inputCheckNParsing();  // check data
+
+    // new request
+    $result = PingRequestHandler::HandleRequest(trim((file_get_contents('php://input'))));
+
+    if (is_array($result) && sizeof($result) == 3) {
+
+      $this->sendResponse($result);
+    } else {
+      echo "<pre>" . htmlentities($result->saveXML()) . "</pre>";
+    }
 
   }
+
+//---------------------
+//
+//
 
   private function inputCheckNParsing($xsdFilename = '')
   {
@@ -94,12 +102,13 @@ class VWController extends Controller
   }
 
   /**
-   * Sends a default response in case of Client Errors or unexpected server errors
-   * @param  integer $code     The Http code to be returned, default to 500
-   * @param  string  $response Http descrpition to be shown along the http status, default to "Internal Server Error"s
-   * @return [type]            Return previous 2 parameters in XML 1.0 format
-   */
-  private function sendResponse($code = 500, $response = 'Internal Server Error')
+    * Sends a default response in case of Client Errors or unexpected server errors
+    * @param  array  $response An array containing these parameters
+      * embeded-param integer $code     The Http code to be returned, default to 500
+      * embeded-param string $response Http desc to be shown along the http status, default to "Internal Server Errors"
+    * @return [type]            Return the given array
+  */
+  private function sendResponse(array $response)
   {
     header('Content-type: application/xml; charset=utf-8');
 
@@ -110,12 +119,16 @@ class VWController extends Controller
     $rootNode = $aDomDocument->appendChild($rootNode);
 
     // append the HTTP code
-    $node = $aDomDocument->createElement("HTTPStatusCode", $code);
-    $insertedNode = $rootNode->appendChild($node);
+    $statusNode = $aDomDocument->createElement("Status", $response[0]);
+    $insertedNode = $rootNode->appendChild($statusNode);
+
+    // append the HTTP code
+    $HTTPStatusNode = $aDomDocument->createElement("HTTPStatusCode", $response[1]);
+    $insertedNode = $rootNode->appendChild($HTTPStatusNode);
 
     // append the response text
-    $node2 = $aDomDocument->createElement("Response", $response);
-    $insertedNode = $rootNode->appendChild($node2);
+    $descNode = $aDomDocument->createElement("Response", $response[2]);
+    $insertedNode = $rootNode->appendChild($descNode);
 
     //die(CJSON::encode(array("result" => $response)));
     echo $aDomDocument->saveXML();
