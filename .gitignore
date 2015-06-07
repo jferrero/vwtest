@@ -1,3 +1,4 @@
 vwetst/assets/*
 vwtest/protected/runtime/*
 .DS_Store
+vwtest/protected/runtime/application.log
