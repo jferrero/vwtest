@@ -6,15 +6,14 @@ $this->pageTitle=Yii::app()->name;
 
 <h1>Welcome to <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
 
-<p>Congratulations! You have successfully created your Yii application.</p>
+<p>Comments and additional data could be found <a href="https://github.com/jferrero/vwtest/blob/master/README">here</a>,
+and images with the responses could be found <a href="https://github.com/jferrero/vwtest/tree/master/vwtest/protected/data/images/">here </a></p>
+<br>
+<?php
 
-<p>You may change the content of this page by modifying the following two files:</p>
-<ul>
-	<li>View file: <code><?php echo __FILE__; ?></code></li>
-	<li>Layout file: <code><?php echo $this->getLayoutFile('main'); ?></code></li>
-</ul>
-
-<p>For more details on how to further develop this application, please read
-the <a href="http://www.yiiframework.com/doc/">documentation</a>.
-Feel free to ask in the <a href="http://www.yiiframework.com/forum/">forum</a>,
-should you have any questions.</p>
+echo "Generic API URL could be found <a href='/index.php/vw/api'>here</a></p>";
+echo "Ping URL could be found <a href='/index.php/vw/ping'>here</a></p>";
+echo "Reverse API URL could be found <a href='/index.php/vw/reverse'>here</a></p>";
+?>
+<br><br>
+Altough they will not work with GET

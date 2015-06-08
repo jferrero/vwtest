@@ -21,7 +21,7 @@ class VWController extends Controller
 
     // this could be done with the FWK, but done here for the purpose of this test
     if ($_SERVER['REQUEST_METHOD'] != "POST") {
-      NackResponseHandler::HandleRequest(null, 405, "Method Not Allowed");
+      NackResponseHandler::HandleRequest(null, 400, "Method Not Allowed");
     }
 
     try {
@@ -40,7 +40,7 @@ class VWController extends Controller
         header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
         echo $result->saveXML(); // print XML to the response, along with a 200.
       } else {
-        NackResponseHandler::HandleRequest(null, 405, "Method Not Allowed");
+        NackResponseHandler::HandleRequest(null, 405, "Bad Request/Method Not Allowed");
       }
 
     } catch (Exception $e) {

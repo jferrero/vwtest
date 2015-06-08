@@ -109,11 +109,15 @@ abstract class AbstractXMLHandler
     if ($requestDocumentElement) {
       // access the diferent elements of the Request-XML header, to be used in the response Header
       if (($theOldSenderNode = $this->findFirstElementByTagName($this->requestXmlObject, "sender"))   == false) {
-        NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-6");
+        if (!($this instanceof NackResponseHandler)) {  // bettet avoid recursive selfcalls
+          NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-6");
+        }
       }
 
       if (($theOldReferenceNode = $this->findFirstElementByTagName($this->requestXmlObject, "reference"))   == false) {
-        NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-7");
+        if (!($this instanceof NackResponseHandler)) {  // bettet avoid recursive selfcalls
+          NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-7");
+        }
       }
 
       $theOldSenderNodeValue = $theOldSenderNode->nodeValue;

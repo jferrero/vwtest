@@ -1,5 +1,6 @@
 VWTEST 
 
+Test made with the last 1.x Yii stable Version
 
 ------------------------------ INSTALLATION INSTRUCCTIONS -------------------------
 
@@ -37,13 +38,19 @@ There are 3 methods on the API:
 
 1) Generic API
 
+As requested on the PDF
+
 http://vwtest.example.com/index.php/vw/api
 
 2) ping
 
+Specific for ping_request
+
 http://vwtest.example.com/index.php/vw/ping
 
 3) Reserve
+
+Specific for reserve_requests
 
 http://vwtest.example.com/index.php/vw/reverse
 
