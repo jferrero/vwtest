@@ -16,7 +16,6 @@ class ReverseRequestHandler extends AbstractXMLHandler
    */
   public static function HandleRequest($input)
   {
-
     $aReverseRequestHandler = new ReverseRequestHandler($input);                // create a ReverseRequest Object
     if (is_array($result = $aReverseRequestHandler->validateVsXsd())) {      // check if it's an XML an validate against an xml
 

@@ -29,7 +29,6 @@ class NackResponseHandler extends AbstractXMLHandler
 
   }
 
-
   /**
    * Once ensured it's the proper XML, a reponse should be sended
    * @return [type] the response object

@@ -16,10 +16,9 @@ class PingRequestHandler extends AbstractXMLHandler
    */
   public static function HandleRequest($input)
   {
-
     $aPingRequestHandler = new PingRequestHandler($input);                // create a PingRequest Object
-    if (!($result instanceof DOMDocument)) {
-      NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Unknown Server Error, Request could not be understood");
+    if (!($result = $aPingRequestHandler->validateVsXsd()) instanceof DomDocument) {      // check if it's an XML an validate against an xml
+      NackResponseHandler::HandleRequest(null, 500, "Unknown Server Error, Request could not be understood");
     } else {
       // check-up and good to go
       return $aPingRequestHandler->handleResponse();                      // handle and return the reponse

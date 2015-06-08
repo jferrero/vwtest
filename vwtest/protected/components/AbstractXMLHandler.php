@@ -104,11 +104,6 @@ abstract class AbstractXMLHandler
       NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Error while parsing the XML response object-5");
     }
 
-
-    if ($this instanceof NackResponseHandler) {
-      //print_r($this->requestXmlObject);die;
-    }
-
     if ($requestDocumentElement) {
       // access the diferent elements of the Request-XML header, to be used in the response Header
       if (($theOldSenderNode = $this->findFirstElementByTagName($this->requestXmlObject, "sender"))   == false) {

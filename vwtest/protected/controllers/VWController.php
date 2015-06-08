@@ -12,6 +12,9 @@ class VWController extends Controller
    */
   public function actionPing()
   {
+    ob_start();
+    header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
+
     // this could be done with the FWK, but done here for the purpose of this test
     if ($_SERVER['REQUEST_METHOD'] != "POST") {
       $this->sendResponse(array("Method Not Allowed", 405, "Method Not Allowed"));
@@ -24,7 +27,7 @@ class VWController extends Controller
 
         $this->sendResponse($result); // return error, with info provided from within the app core
       } else {
-        echo "<pre>" . htmlentities($result->saveXML()) . "</pre>"; // print XML to the response, along with a 200.
+        echo $result->saveXML(); // print XML to the response, along with a 200.
       }
     } catch (VWException $e) {
       $this->sendResponse(CJSON::decode($e->getMessage()));   // catch the exception, print the result xml
@@ -40,6 +43,9 @@ class VWController extends Controller
    */
   public function actionReverse()
   {
+    ob_start();
+    header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
+
     // this could be done with the FWK, but done here for the purpose of this test
     if ($_SERVER['REQUEST_METHOD'] != "POST") {
       $this->sendResponse(array("Method Not Allowed", 405, "Method Not Allowed"));
@@ -52,7 +58,7 @@ class VWController extends Controller
 
         $this->sendResponse($result); // return error, with info provided from within the app core
       } else {
-        echo "<pre>" . htmlentities($result->saveXML()) . "</pre>"; // print XML to the response, along with a 200.
+        echo $result->saveXML(); // print XML to the response, along with a 200.
       }
     } catch (VWException $e) {
       $this->sendResponse(CJSON::decode($e->getMessage())); // catch the exception, print the result xml
@@ -72,7 +78,6 @@ class VWController extends Controller
   */
   private function sendResponse(array $response)
   {
-
     header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
 
     $response[0] = ($response[0]) ? $response[0] : "Error";     // force the defualt values for the 3 params
@@ -103,25 +108,4 @@ class VWController extends Controller
     die();
   }
 
-}
-
-register_shutdown_function( "fatal_handler" );
-
-function fatal_handler()
-{
-  $errfile = "unknown file";
-  $errstr  = "shutdown";
-  $errno   = E_CORE_ERROR;
-  $errline = 0;
-
-  $error = error_get_last();
-
-  if ($error !== NULL) {
-    $errno   = $error["type"];
-    $errfile = $error["file"];
-    $errline = $error["line"];
-    $errstr  = $error["message"];
-
-    //error_mail(format_error( $errno, $errstr, $errfile, $errline));
-  }
 }
