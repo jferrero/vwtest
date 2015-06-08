@@ -17,17 +17,12 @@ class ReverseRequestHandler extends AbstractXMLHandler
   public static function HandleRequest($input)
   {
     $aReverseRequestHandler = new ReverseRequestHandler($input);                // create a ReverseRequest Object
-    if (is_array($result = $aReverseRequestHandler->validateVsXsd())) {      // check if it's an XML an validate against an xml
-
-      throw new VWException(CJSON::encode($result));
-    } elseif (!($result instanceof DOMDocument)) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, XML could not be parsed")));
+    if (!($result = $aReverseRequestHandler->validateVsXsd()) instanceof DomDocument) {      // check if it's an XML an validate against an xml
+      NackResponseHandler::HandleRequest(null, 500, "Unknown Server Error, Request could not be understood");
     } else {
-
       // check-up and good to go
       return $aReverseRequestHandler->handleResponse();                      // handle and return the reponse
     }
-
   }
 
   /**

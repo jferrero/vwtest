@@ -13,7 +13,6 @@ class VWController extends Controller
   public function actionPing()
   {
     ob_start();
-    header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
 
     // this could be done with the FWK, but done here for the purpose of this test
     if ($_SERVER['REQUEST_METHOD'] != "POST") {
@@ -27,6 +26,7 @@ class VWController extends Controller
 
         $this->sendResponse($result); // return error, with info provided from within the app core
       } else {
+        header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
         echo $result->saveXML(); // print XML to the response, along with a 200.
       }
     } catch (VWException $e) {
@@ -44,7 +44,6 @@ class VWController extends Controller
   public function actionReverse()
   {
     ob_start();
-    header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
 
     // this could be done with the FWK, but done here for the purpose of this test
     if ($_SERVER['REQUEST_METHOD'] != "POST") {
@@ -58,6 +57,7 @@ class VWController extends Controller
 
         $this->sendResponse($result); // return error, with info provided from within the app core
       } else {
+        header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
         echo $result->saveXML(); // print XML to the response, along with a 200.
       }
     } catch (VWException $e) {

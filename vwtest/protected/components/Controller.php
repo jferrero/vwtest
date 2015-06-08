@@ -1,6 +1,6 @@
 <?php
 
-require 'error_handling.php';
+require 'Error_VW.php';
 
 /**
  * Controller is the customized base controller class.

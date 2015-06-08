@@ -30,15 +30,14 @@ class NackResponseHandler extends AbstractXMLHandler
   }
 
   /**
-   * Once ensured it's the proper XML, a reponse should be sended
+   * Once ensured it's the proper XML, a response should be sended
    * @return [type] the response object
    */
   protected function handleResponse()
   {
     if (file_exists($this->xmlResponseSampleFilepath . $this->xmlResponseSampleFilename)) {
-      $aResponseXMLObject = new DOMDocument;
+      $this->responseXMLObject = $aResponseXMLObject = new DOMDocument;
       $aResponseXMLObject->load($this->xmlResponseSampleFilepath . $this->xmlResponseSampleFilename);    // load the xml, allowing big XMLs as well
-      $this->responseXMLObject = $aResponseXMLObject;
     }
 
     parent::handleResponse();   // made the standard changes to the response document
@@ -48,11 +47,11 @@ class NackResponseHandler extends AbstractXMLHandler
     }
 
     if (($theCodeNode = $this->findFirstElementByTagName($theBodyNode, "code"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-N1")));
+      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-N2")));
     }
 
     if (($theMessageNode = $this->findFirstElementByTagName($theBodyNode, "message"))   == false) {
-      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-N1")));
+      throw new VWException(CJSON::encode(array("Error", "500", "Unknown Server Error, Errors while parsing the XML response object-N3")));
     }
 
     $theCodeNode->nodeValue = $this->errorCode;
