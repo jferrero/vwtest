@@ -40,8 +40,8 @@ return array(
 
         // uncomment the following to enable URLs in path-format
                 'urlManager'=>array(
-                    'urlFormat'=>'path',
-                    //'showScriptName'=>false,
+                'urlFormat'=>'path',
+                'showScriptName'=>false,
                     'rules'=>array(
                                             '/api' => array('vw/api'),
                                             '/ping' => array('vw/ping'),

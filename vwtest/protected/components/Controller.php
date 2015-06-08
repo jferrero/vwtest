@@ -26,7 +26,7 @@ class Controller extends CController
 
     public function missingAction($actionID)
     {
-        throw new CHttpException(404,Yii::t('yii','The VWAPI does not include a method "{action}".',
+        NackResponseHandler::HandleRequest(null, 500,Yii::t('yii','The VWAPI does not include a method "{action}".',
         array('{action}'=>$actionID==''?$this->defaultAction:$actionID)));
     }
 }

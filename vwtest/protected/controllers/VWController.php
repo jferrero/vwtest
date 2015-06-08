@@ -43,10 +43,8 @@ class VWController extends Controller
         NackResponseHandler::HandleRequest(null, 405, "Method Not Allowed");
       }
 
-    } catch (VWException $e) {
-      $this->sendResponse(CJSON::decode($e->getMessage()));   // catch the exception, print the result xml
     } catch (Exception $e) {
-      $this->sendResponse(array(501, $e->getMessage())); // catch the exception, print the result xml
+      NackResponseHandler::HandleRequest(null, 405, $e->getMessage());
     }
 
   }
@@ -70,10 +68,8 @@ class VWController extends Controller
       header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
       echo $result->saveXML(); // print XML to the response, along with a 200.
 
-    } catch (VWException $e) {
-      $this->sendResponse(CJSON::decode($e->getMessage()));   // catch the exception, print the result xml
     } catch (Exception $e) {
-      $this->sendResponse(array(501, $e->getMessage())); // catch the exception, print the result xml
+      NackResponseHandler::HandleRequest(null, 405, $e->getMessage());
     }
 
   }
@@ -97,52 +93,8 @@ class VWController extends Controller
       header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
       echo $result->saveXML(); // print XML to the response, along with a 200.
 
-    } catch (VWException $e) {
-      $this->sendResponse(CJSON::decode($e->getMessage())); // catch the exception, print the result xml
     } catch (Exception $e) {
-      $this->sendResponse(array(501, "Unknown server error")); // catch the exception, print the result xml
+      NackResponseHandler::HandleRequest(null, 405, $e->getMessage());
     }
   }
-
-  /**
-    * Sends a default response in case of client Errors or unexpected server errors
-    * VERY BASIC (FOR THE SAKE OF TIME) error-output system
-    * @param  array  $response An array containing these parameters
-    * * embeded-param integer type     The Http code to be returned, default to Error
-      * embeded-param integer code     The Http code to be returned, default to 500
-      * embeded-param string response Http desc to be shown along the http status, default to "Internal Server Error"
-    * @return [type]            Return the given array
-  */
-  private function sendResponse(array $response)
-  {
-    header('Content-type: application/xml; charset=utf-8');     // set chatset and content-type
-
-    $response[0] = ($response[0]) ? $response[0] : "Error";     // force the defualt values for the 3 params
-    $response[1] = ($response[1]) ? $response[1] : 500;
-    $response[2] = ($response[2]) ? $response[2] : "Internal Server Error";
-
-    http_response_code($response[1]);                           // set the appropiate http_status
-
-    $aDomDocument = new DOMDocument('1.0', "UTF-8");            // hydrate the response
-
-    // append the root node
-    $rootNode = $aDomDocument->createElement("VWTestDefaultResponse");
-    $rootNode = $aDomDocument->appendChild($rootNode);
-
-    // append the "STATUS", just as "Error"
-    $statusNode = $aDomDocument->createElement("Status", $response[0]);
-    $insertedNode = $rootNode->appendChild($statusNode);
-
-    // append the HTTP status, such as 401
-    $HTTPStatusNode = $aDomDocument->createElement("HTTPStatusCode", $response[1]);
-    $insertedNode = $rootNode->appendChild($HTTPStatusNode);
-
-    // append the response text
-    $descNode = $aDomDocument->createElement("Response", $response[2]);
-    $insertedNode = $rootNode->appendChild($descNode);
-
-    echo $aDomDocument->saveXML();
-    die();
-  }
-
 }
