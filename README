@@ -2,7 +2,7 @@ VWTEST
 
 Test made with the last 1.x Yii stable Version
 
------------------------------- INSTALLATION INSTRUCCTIONS -------------------------
+------------------------------ INSTALLATION INSTRUCCTIONS ---------------
 
 1) /etc/hosts
 
@@ -54,7 +54,8 @@ Specific for reserve_requests
 
 http://vwtest.example.com/index.php/reverse
 
------------------------------- DOWNLOAD INFO -------------------------
+------------------------------ DOWNLOAD INFO ----------------------
 
 
-https://github.com/jferrero/vwtest/archive/master.zip
+Full Source - https://github.com/jferrero/vwtest/archive/master.zip
+Result Images - https://github.com/jferrero/vwtest/tree/master/vwtest/protected/data/resultimages/
