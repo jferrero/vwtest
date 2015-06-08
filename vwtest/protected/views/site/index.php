@@ -7,7 +7,7 @@ $this->pageTitle=Yii::app()->name;
 <h1>Welcome to <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
 
 <p>Comments and additional data could be found <a href="https://github.com/jferrero/vwtest/blob/master/README">here</a>,
-and images with the responses could be found <a href="https://github.com/jferrero/vwtest/tree/master/vwtest/protected/data/images/">here </a></p>
+and images with the responses could be found <a href="https://github.com/jferrero/vwtest/tree/master/vwtest/protected/data/resultimages/">here </a></p>
 <br>
 <?php
 

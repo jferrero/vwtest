@@ -1,9 +1,8 @@
-<h1> VWTEST </h1>
+VWTEST 
 
+Test made with the last 1.x Yii stable Version
 
-<h2> INSTALLATION INSTRUCCTIONS </h2>
-
-There are none specific installation instructions, here is what i did:
+------------------------------ INSTALLATION INSTRUCCTIONS -------------------------
 
 1) /etc/hosts
 
@@ -28,24 +27,34 @@ There are none specific installation instructions, here is what i did:
    </Directory>
 </VirtualHost>
 
-3) If the 'Application runtime path "........./protected/runtime"' error appears, just grant 777 to that directory
+3) If the 'Application runtime path "........./protected/runtime"' error appears,create the folder and just grant 777 to that directory
 
 mkdir -p /....DIR.....protected/runtime
 chmod  -R 777 /....DIR....../protected/runtime
 
-<h2> Access INFO </h2>
+------------------------------ Access INFO -------------------------
 
 There are 3 methods on the API:
 
 1) Generic API
 
+As requested on the PDF
+
 http://vwtest.example.com/index.php/vw/api
 
-
 2) ping
+
+Specific for ping_request
 
 http://vwtest.example.com/index.php/vw/ping
 
 3) Reserve
 
+Specific for reserve_requests
+
 http://vwtest.example.com/index.php/vw/reverse
+
+------------------------------ DOWNLOAD INFO -------------------------
+
+
+https://github.com/jferrero/vwtest/archive/master.zip
