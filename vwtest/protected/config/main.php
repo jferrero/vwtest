@@ -43,8 +43,9 @@ return array(
                     'urlFormat'=>'path',
                     //'showScriptName'=>false,
                     'rules'=>array(
-                                            '/api/test' => array('vw/test'),
-                                            //'/proyecto-social-facebook' => array('retos/indexFacebook'),
+                                            '/api' => array('vw/api'),
+                                            '/ping' => array('vw/ping'),
+                                            '/reverse' => array('vw/reverse'),
                     ),
                 ),
 
