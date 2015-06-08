@@ -11,6 +11,7 @@ class NackResponseHandler extends AbstractXMLHandler
   protected $xmlResponseSampleFilename = 'nack.xml';              // filename of the example xml response
   private $errorCode;
   private $errorMsg;
+  public static $classIsPublished = false;                        // sets if the class can be called from the outside (to allow auto calling and allow generalization at the same time)
 
   /**
    * Class entry point, creates a Object off this class and start the all method chain, returns an array-error or the XML to be returned if all it's sucessfull

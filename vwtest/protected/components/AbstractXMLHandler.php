@@ -20,6 +20,8 @@ abstract class AbstractXMLHandler
   protected $xmlResponseSampleFilepath = 'protected/data/samples/'; // path (not including the filename) of all sample files
   protected $XmlResponseFilename = null;                  // xsd response fileName (not hydrated, since this is an abstract class)
 
+  public static $classIsPublished = true;                 // sets if the class can be called from the outside (to allow auto calling and allow generalization at the same time)
+
   /**
    * Typical constructor, made in order to be able to make one-line request at the constructor.
    * @param [type] $inputdata the raw POST input

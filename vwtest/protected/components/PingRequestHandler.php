@@ -34,6 +34,7 @@ class PingRequestHandler extends AbstractXMLHandler
   {
     parent::handleResponse();   // made the standard changes to the response document
 
+    // copy the requestBody to the response Body
     if (($theBodyNode = $this->findFirstElementByTagName($this->responseXMLObject->documentElement, "body")) == false) {
       NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Unknown Server Error, Errors while parsing the XML response object-P1");
     }
@@ -42,7 +43,7 @@ class PingRequestHandler extends AbstractXMLHandler
       NackResponseHandler::HandleRequest($this->requestXmlObject, 500, "Unknown Server Error, Errors while parsing the XML response object-P2");
     }
 
-    $theBodyNode->nodeValue = $theOldBody->nodeValue;   // copu the value (optional at the TEST PDF)
+    $theBodyNode->nodeValue = $theOldBody->nodeValue;   // copy the value (optional at the TEST PDF)
 
     return $this->responseXMLObject;
   }
