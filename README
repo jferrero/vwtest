@@ -40,19 +40,19 @@ There are 3 methods on the API:
 
 As requested on the PDF
 
-http://vwtest.example.com/index.php/vw/api
+http://vwtest.example.com/index.php/api
 
 2) ping
 
 Specific for ping_request
 
-http://vwtest.example.com/index.php/vw/ping
+http://vwtest.example.com/index.php/ping
 
 3) Reserve
 
 Specific for reserve_requests
 
-http://vwtest.example.com/index.php/vw/reverse
+http://vwtest.example.com/index.php/reverse
 
 ------------------------------ DOWNLOAD INFO -------------------------
 

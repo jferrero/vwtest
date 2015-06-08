@@ -11,9 +11,9 @@ and images with the responses could be found <a href="https://github.com/jferrer
 <br>
 <?php
 
-echo "Generic API URL could be found <a href='/index.php/vw/api'>here</a></p>";
-echo "Ping URL could be found <a href='/index.php/vw/ping'>here</a></p>";
-echo "Reverse API URL could be found <a href='/index.php/vw/reverse'>here</a></p>";
+echo "Generic API URL could be found <a href='/index.php/api'>here</a></p>";
+echo "Ping URL could be found <a href='/index.php/ping'>here</a></p>";
+echo "Reverse API URL could be found <a href='/index.php/reverse'>here</a></p>";
 ?>
 <br><br>
 Altough they will not work with GET

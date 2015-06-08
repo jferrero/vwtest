@@ -43,9 +43,9 @@ return array(
                 'urlFormat'=>'path',
                 'showScriptName'=>false,
                     'rules'=>array(
-                                            '/api' => array('vw/api'),
-                                            '/ping' => array('vw/ping'),
-                                            '/reverse' => array('vw/reverse'),
+                        '/api' => array('vw/api'),
+                        '/ping' => array('vw/ping'),
+                        '/reverse' => array('vw/reverse'),
                     ),
                 ),
 
