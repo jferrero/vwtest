@@ -6,6 +6,11 @@
 class VWController extends Controller
 {
 
+  public function actionIndex()
+  {
+    return false;
+  }
+
   /**
    * Unique access point for the entire API, Expects a POST XML
    * @return [type] [description]
